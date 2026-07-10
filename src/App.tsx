@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowRight,
   Heart,
   Mail,
@@ -650,11 +650,11 @@ function GlobeCanvas() {
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
 
-      const cx = width * 0.55;
-      const cy = height * 1.08;
-      const radius = Math.min(width * 0.62, height * 1.18);
-      const centerLon = 76;
-      const tilt = 0.16;
+      const cx = width * 0.5;
+      const cy = height * 1.26;
+      const radius = Math.max(width * 0.47, height * 0.84);
+      const centerLon = 96;
+      const tilt = 0.1;
       const toRad = Math.PI / 180;
 
       const project = (lon: number, lat: number) => {
@@ -703,13 +703,6 @@ function GlobeCanvas() {
         context.stroke();
       };
 
-      const isApproximateLand = (lon: number, lat: number) =>
-        (lon > -15 && lon < 155 && lat > 5 && lat < 72) ||
-        (lon > -20 && lon < 52 && lat > -36 && lat < 35) ||
-        (lon > 105 && lon < 155 && lat > -45 && lat < -8) ||
-        (lon > -170 && lon < -45 && lat > 12 && lat < 72) ||
-        (lon > -85 && lon < -35 && lat > -56 && lat < 14);
-
       context.save();
       context.beginPath();
       context.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -718,10 +711,6 @@ function GlobeCanvas() {
       context.fillStyle = "rgba(255,255,255,0.45)";
       for (let lat = -58; lat <= 72; lat += 3.2) {
         for (let lon = centerLon - 88; lon <= centerLon + 88; lon += 4.2) {
-          if (!isApproximateLand(lon, lat)) {
-            continue;
-          }
-
           const point = project(lon, lat);
 
           if (!point) {
@@ -772,17 +761,6 @@ function GlobeCanvas() {
       context.lineWidth = 1.2;
       context.stroke();
 
-      const hefei = project(117.23, 31.82);
-
-      if (hefei) {
-        context.beginPath();
-        context.arc(hefei.x, hefei.y, 5.3, 0, Math.PI * 2);
-        context.fillStyle = "#ff5a1f";
-        context.shadowColor = "rgba(255,90,31,0.82)";
-        context.shadowBlur = 16;
-        context.fill();
-        context.shadowBlur = 0;
-      }
     };
 
     const resizeObserver = new ResizeObserver(draw);
@@ -903,10 +881,10 @@ function Services() {
               <strong>总部位于 中国 合肥</strong>
               <span>
                 <i />
-                可取得 全球
+                AVAILABLE WORLDWIDE
               </span>
             </div>
-            <img className="globe-image" src={assetUrl("service-images/rotating-earth.webp")} alt="旋转地球" />
+            <GlobeCanvas />
           </Reveal>
 
           <Reveal className="creator-card" delay={0.12}>
