@@ -141,6 +141,20 @@ const testimonials = [
   }
 ];
 
+const communityAvatars = [
+  ...testimonials.map((item) => ({
+    name: item.name,
+    initials: item.initials,
+    avatarColor: item.avatarColor
+  })),
+  { name: "Motion Partner", initials: "MP", avatarColor: "linear-gradient(135deg, #c3f73a, #143d2a)" },
+  { name: "AI Director", initials: "AI", avatarColor: "linear-gradient(135deg, #ffffff, #ff5a1f)" },
+  { name: "Visual Designer", initials: "VI", avatarColor: "linear-gradient(135deg, #d7c9ff, #2d1a66)" },
+  { name: "Web Engineer", initials: "WE", avatarColor: "linear-gradient(135deg, #8ad7ff, #111827)" },
+  { name: "Brand Strategist", initials: "BS", avatarColor: "linear-gradient(135deg, #ffe8a3, #8b3f12)" },
+  { name: "3D Artist", initials: "3D", avatarColor: "linear-gradient(135deg, #e8ecef, #161616)" }
+];
+
 const servedBrands = [
   "服务过的品牌方",
   "Microsoft",
@@ -622,7 +636,7 @@ function MotionBand() {
   );
 }
 
-function GlobeCanvas() {
+function CommunityGlobeCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -632,14 +646,22 @@ function GlobeCanvas() {
       return;
     }
 
-    const draw = () => {
+    let frameId = 0;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const draw = (time = 0) => {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       const width = Math.max(1, rect.width);
       const height = Math.max(1, rect.height);
 
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
+      const nextWidth = Math.round(width * dpr);
+      const nextHeight = Math.round(height * dpr);
+
+      if (canvas.width !== nextWidth || canvas.height !== nextHeight) {
+        canvas.width = nextWidth;
+        canvas.height = nextHeight;
+      }
 
       const context = canvas.getContext("2d");
 
@@ -651,10 +673,10 @@ function GlobeCanvas() {
       context.clearRect(0, 0, width, height);
 
       const cx = width * 0.5;
-      const cy = height * 1.26;
-      const radius = Math.max(width * 0.47, height * 0.84);
-      const centerLon = 96;
-      const tilt = 0.1;
+      const cy = height * 0.52;
+      const radius = Math.min(width, height) * 0.38;
+      const centerLon = 112 + (reduceMotion ? 0 : time * 0.004);
+      const tilt = 0.18;
       const toRad = Math.PI / 180;
 
       const project = (lon: number, lat: number) => {
@@ -668,7 +690,7 @@ function GlobeCanvas() {
 
         return {
           x: cx + radius * Math.cos(phi) * Math.sin(lambda),
-          y: cy - radius * (Math.sin(phi) * 0.82 + Math.cos(phi) * Math.cos(lambda) * tilt),
+          y: cy - radius * (Math.sin(phi) * 0.86 + Math.cos(phi) * Math.cos(lambda) * tilt),
           visibility: Math.max(0, visibility)
         };
       };
@@ -703,23 +725,40 @@ function GlobeCanvas() {
         context.stroke();
       };
 
+      const globeGradient = context.createRadialGradient(
+        cx - radius * 0.3,
+        cy - radius * 0.35,
+        radius * 0.1,
+        cx,
+        cy,
+        radius
+      );
+      globeGradient.addColorStop(0, "rgba(255, 255, 255, 0.96)");
+      globeGradient.addColorStop(0.72, "rgba(246, 241, 232, 0.86)");
+      globeGradient.addColorStop(1, "rgba(220, 214, 202, 0.56)");
+
+      context.beginPath();
+      context.arc(cx, cy, radius, 0, Math.PI * 2);
+      context.fillStyle = globeGradient;
+      context.fill();
+
       context.save();
       context.beginPath();
       context.arc(cx, cy, radius, 0, Math.PI * 2);
       context.clip();
 
-      context.fillStyle = "rgba(255,255,255,0.45)";
-      for (let lat = -58; lat <= 72; lat += 3.2) {
-        for (let lon = centerLon - 88; lon <= centerLon + 88; lon += 4.2) {
+      context.fillStyle = "rgba(5, 5, 5, 0.64)";
+      for (let lat = -62; lat <= 72; lat += 3) {
+        for (let lon = centerLon - 88; lon <= centerLon + 88; lon += 4) {
           const point = project(lon, lat);
 
           if (!point) {
             continue;
           }
 
-          context.globalAlpha = 0.16 + point.visibility * 0.34;
+          context.globalAlpha = 0.12 + point.visibility * 0.34;
           context.beginPath();
-          context.arc(point.x, point.y, 1.05, 0, Math.PI * 2);
+          context.arc(point.x, point.y, 0.92, 0, Math.PI * 2);
           context.fill();
         }
       }
@@ -731,7 +770,7 @@ function GlobeCanvas() {
         for (let lon = centerLon - 90; lon <= centerLon + 90; lon += 2) {
           points.push([lon, lat]);
         }
-        drawProjectedLine(points, "rgba(255,255,255,0.16)", 1);
+        drawProjectedLine(points, "rgba(5,5,5,0.11)", 1);
       }
 
       for (let lon = -180; lon <= 180; lon += 15) {
@@ -739,7 +778,7 @@ function GlobeCanvas() {
         for (let lat = -70; lat <= 82; lat += 2) {
           points.push([lon, lat]);
         }
-        drawProjectedLine(points, "rgba(255,255,255,0.15)", 1);
+        drawProjectedLine(points, "rgba(5,5,5,0.1)", 1);
       }
 
       const outlines: Array<Array<[number, number]>> = [
@@ -751,26 +790,110 @@ function GlobeCanvas() {
         [[108, -9], [125, -18], [145, -18], [155, -30], [136, -43], [114, -36], [108, -9]]
       ];
 
-      outlines.forEach((outline) => drawProjectedLine(outline, "rgba(255,255,255,0.84)", 1.25));
+      outlines.forEach((outline) => drawProjectedLine(outline, "rgba(5,5,5,0.58)", 1.15));
+
+      const markers: Array<[number, number, string, number]> = [
+        [117.23, 31.82, "#ff5a1f", 3.8],
+        [121.47, 31.23, "#15f739", 2.8],
+        [2.35, 48.86, "#050505", 2.4],
+        [-74.01, 40.71, "#050505", 2.4],
+        [139.69, 35.68, "#050505", 2.4]
+      ];
+
+      markers.forEach(([lon, lat, color, size]) => {
+        const point = project(lon, lat);
+
+        if (!point) {
+          return;
+        }
+
+        const glowColor =
+          color === "#ff5a1f"
+            ? "rgba(255, 90, 31, 0.16)"
+            : color === "#15f739"
+              ? "rgba(21, 247, 57, 0.16)"
+              : "rgba(5, 5, 5, 0.1)";
+
+        context.globalAlpha = 0.48 + point.visibility * 0.52;
+        context.beginPath();
+        context.arc(point.x, point.y, size + 5, 0, Math.PI * 2);
+        context.fillStyle = glowColor;
+        context.fill();
+        context.globalAlpha = 1;
+        context.beginPath();
+        context.arc(point.x, point.y, size, 0, Math.PI * 2);
+        context.fillStyle = color;
+        context.fill();
+      });
 
       context.restore();
 
       context.beginPath();
-      context.arc(cx, cy, radius, Math.PI * 1.03, Math.PI * 1.98);
-      context.strokeStyle = "rgba(255,255,255,0.22)";
+      context.arc(cx, cy, radius, 0, Math.PI * 2);
+      context.strokeStyle = "rgba(5,5,5,0.16)";
       context.lineWidth = 1.2;
       context.stroke();
 
     };
 
-    const resizeObserver = new ResizeObserver(draw);
-    resizeObserver.observe(canvas);
-    draw();
+    const render = (time: number) => {
+      draw(time);
 
-    return () => resizeObserver.disconnect();
+      if (!reduceMotion) {
+        frameId = requestAnimationFrame(render);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => draw(0));
+    resizeObserver.observe(canvas);
+    render(0);
+
+    return () => {
+      resizeObserver.disconnect();
+      cancelAnimationFrame(frameId);
+    };
   }, []);
 
-  return <canvas ref={canvasRef} className="globe-canvas" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="community-globe__canvas" aria-hidden="true" />;
+}
+
+function CommunityGlobe() {
+  return (
+    <div className="community-card__inner community-card__inner--globe-only">
+      <div className="community-card__visual" data-cursor="media" data-cursor-label="全球协作">
+        <div className="community-globe">
+          <CommunityGlobeCanvas />
+          <div className="community-orbit" aria-hidden="true">
+            <div className="community-orbit__ring">
+              {communityAvatars.map((avatar, index) => (
+                <span
+                  className="community-orbit__slot"
+                  key={`${avatar.initials}-${index}`}
+                  style={
+                    {
+                      "--angle": `${(360 / communityAvatars.length) * index}deg`
+                    } as CSSProperties
+                  }
+                >
+                  <span
+                    className="community-orbit__avatar"
+                    style={{ "--avatar-bg": avatar.avatarColor } as CSSProperties}
+                    title={avatar.name}
+                  >
+                    <span>{avatar.initials}</span>
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="community-globe__meta">
+            <span>HEFEI, CN</span>
+            <span>AVAILABLE WORLDWIDE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function FeaturedWork() {
@@ -876,15 +999,8 @@ function Services() {
             <span>了解更多 →</span>
           </Reveal>
 
-          <Reveal className="globe-card" delay={0.1}>
-            <div className="globe-card__caption">
-              <strong>总部位于 中国 合肥</strong>
-              <span>
-                <i />
-                AVAILABLE WORLDWIDE
-              </span>
-            </div>
-            <GlobeCanvas />
+          <Reveal className="community-card" delay={0.1}>
+            <CommunityGlobe />
           </Reveal>
 
           <Reveal className="creator-card" delay={0.12}>
