@@ -65,21 +65,21 @@ const services = [
   {
     title: "品牌识别",
     label: "Brand identity",
-    video: assetUrl("service-videos/keycaps-loop.webm"),
+    video: assetUrl("service-videos/KEY01.webm"),
     text: "定义品牌的市场位置、语气和视觉原则，把抽象优势转成可执行的传播系统。",
     bullets: ["品牌定位", "命名与语气", "内容叙事", "发布路径"]
   },
   {
     title: "网页设计与开发",
     label: "Web design & development",
-    video: assetUrl("service-videos/robot-hand.webm"),
+    video: assetUrl("service-videos/KEY02.webm"),
     text: "用清晰的信息架构、动效节奏和响应式界面，为品牌搭建可持续运营的网站与产品体验。",
     bullets: ["官网设计", "交互原型", "视觉组件", "前端落地"]
   },
   {
     title: "动态系统",
     label: "Motion system",
-    video: assetUrl("service-videos/skate-wheel.webm"),
+    video: assetUrl("service-videos/KEY03.webm"),
     text: "结合 AI 视频、三维视觉和运营模板，为品牌持续输出更有记忆点的内容资产。",
     bullets: ["AI 视频", "视觉运营", "短片节奏", "活动物料"]
   }
