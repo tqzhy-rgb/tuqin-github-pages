@@ -31,32 +31,32 @@ const heroMedia: HeroMediaSource = {
 const featuredWorks = [
   {
     title: "恩佐德鲁 · 创意公司",
-    image: assetUrl("work/2.png"),
+    image: assetUrl("work/2.webp"),
     tags: ["网页设计与开发"]
   },
   {
     title: "疯狂的七个阶段",
-    image: assetUrl("work/4.jpg"),
+    image: assetUrl("work/4.webp"),
     tags: ["品牌识别", "动态 3D"]
   },
   {
     title: "Kastle AI",
-    image: assetUrl("work/5.jpg"),
+    image: assetUrl("work/5.webp"),
     tags: ["动态 3D", "网页设计与开发"]
   },
   {
     title: "运动内容实验室",
-    image: assetUrl("work/6.jpg"),
+    image: assetUrl("work/6.webp"),
     tags: ["视觉运营", "网页设计"]
   },
   {
     title: "七阶段品牌片",
-    image: assetUrl("work/1-v2.jpg"),
+    image: assetUrl("work/1-v2.webp"),
     tags: ["品牌策划", "AI 视频"]
   },
   {
     title: "智能业务界面",
-    image: assetUrl("work/3.jpg"),
+    image: assetUrl("work/3.webp"),
     tags: ["VI 系统", "产品视觉"]
   }
 ];
@@ -906,7 +906,7 @@ function Services() {
                 可取得 全球
               </span>
             </div>
-            <img className="globe-image" src={assetUrl("service-images/rotating-earth.gif")} alt="旋转地球" />
+            <img className="globe-image" src={assetUrl("service-images/rotating-earth.webp")} alt="旋转地球" />
           </Reveal>
 
           <Reveal className="creator-card" delay={0.12}>

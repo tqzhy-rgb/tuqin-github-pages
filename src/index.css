@@ -1365,7 +1365,7 @@ button {
   min-height: 438px;
   background:
     linear-gradient(180deg, rgba(255, 90, 31, 0.04), rgba(5, 5, 5, 0.18)),
-    url("../service-images/founder-personal-photo.png") center/cover;
+    url("../service-images/founder-personal-photo.webp") center/cover;
   filter: saturate(0.82) contrast(1.08);
 }
 
